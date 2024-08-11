@@ -24,7 +24,17 @@ namespace tanu.CruiseAssist
 
 		public static long NextCheckGameTick = long.MaxValue;
 
-		public static void OnGUI()
+		private static GUIStyle windowStyle = null;
+        private static GUIStyle targetSystemTitleLabelStyle = null;
+        private static GUIStyle targetPlanetTitleLabelStyle = null;
+        private static GUIStyle targetSystemNameLabelStyle = null;
+        private static GUIStyle targetPlanetNameLabelStyle = null;
+        private static GUIStyle targetSystemRangeTimeLabelStyle = null;
+        private static GUIStyle targetPlanetRangeTimeLabelStyle = null;
+        private static GUIStyle cruiseAssistAciviteLabelStyle = null;
+        private static GUIStyle buttonStyle = null;
+
+        public static void OnGUI()
 		{
 			switch (ViewMode)
 			{
@@ -38,8 +48,11 @@ namespace tanu.CruiseAssist
 					break;
 			}
 
-			var windowStyle = new GUIStyle(GUI.skin.window);
-			windowStyle.fontSize = 11;
+			if (windowStyle == null)
+			{
+				windowStyle = new GUIStyle(GUI.skin.window);
+				windowStyle.fontSize = 11;
+			}
 
 			Rect[wIdx] = GUILayout.Window(99030291, Rect[wIdx], WindowFunction, "CruiseAssist", windowStyle);
 
@@ -67,7 +80,7 @@ namespace tanu.CruiseAssist
 
 			if (lastCheckWindowLeft != float.MinValue)
 			{
-				if (Rect[wIdx].x != lastCheckWindowLeft || Rect[wIdx].y != lastCheckWindowTop)
+				if (!Mathf.Approximately(Rect[wIdx].x, lastCheckWindowLeft) || !Mathf.Approximately(Rect[wIdx].y, lastCheckWindowTop))
 				{
 					NextCheckGameTick = GameMain.gameTick + 300;
 				}
@@ -98,52 +111,61 @@ namespace tanu.CruiseAssist
 
 				GUILayout.BeginVertical();
 				{
-					var targetSystemTitleLabelStyle = new GUIStyle(GUI.skin.label);
-					targetSystemTitleLabelStyle.fixedWidth = 50;
-					targetSystemTitleLabelStyle.fixedHeight = 36;
-					targetSystemTitleLabelStyle.fontSize = 12;
-					targetSystemTitleLabelStyle.alignment = TextAnchor.UpperLeft;
-					var targetPlanetTitleLabelStyle = new GUIStyle(targetSystemTitleLabelStyle);
+					if (targetSystemTitleLabelStyle == null)
+                    {
+                        targetSystemTitleLabelStyle = new GUIStyle(GUI.skin.label);
+                        targetSystemTitleLabelStyle.fixedWidth = 50;
+                        targetSystemTitleLabelStyle.fixedHeight = 36;
+                        targetSystemTitleLabelStyle.fontSize = 12;
+                        targetSystemTitleLabelStyle.alignment = TextAnchor.UpperLeft;
+                    }
+                    targetSystemTitleLabelStyle.normal.textColor = systemTextColor;
 
-					targetSystemTitleLabelStyle.normal.textColor = systemTextColor;
+                    if (targetPlanetTitleLabelStyle == null)
+                    {
+                        targetPlanetTitleLabelStyle = new GUIStyle(targetSystemTitleLabelStyle);
+                    }
+                    targetPlanetTitleLabelStyle.normal.textColor = planetTextColor;
 
-					GUILayout.Label("Target\n System:", targetSystemTitleLabelStyle);
-
-					targetPlanetTitleLabelStyle.normal.textColor = planetTextColor;
-
+                    GUILayout.Label("Target\n System:", targetSystemTitleLabelStyle);
 					GUILayout.Label("Target\n Planet:", targetPlanetTitleLabelStyle);
 				}
 				GUILayout.EndVertical();
 
 				GUILayout.BeginVertical();
 				{
-					var targetSystemNameLabelStyle = new GUIStyle(GUI.skin.label);
-					targetSystemNameLabelStyle.fixedWidth = 240;
-					targetSystemNameLabelStyle.fixedHeight = 36;
-					targetSystemNameLabelStyle.fontSize = 14;
-					targetSystemNameLabelStyle.alignment = TextAnchor.MiddleLeft;
-					var targetPlanetNameLabelStyle = new GUIStyle(targetSystemNameLabelStyle);
-
-					if (CruiseAssist.TargetStar != null)
+					if(targetSystemNameLabelStyle == null)
 					{
-						targetSystemNameLabelStyle.normal.textColor = systemTextColor;
+                        targetSystemNameLabelStyle = new GUIStyle(GUI.skin.label);
+                        targetSystemNameLabelStyle.fixedWidth = 240;
+                        targetSystemNameLabelStyle.fixedHeight = 36;
+                        targetSystemNameLabelStyle.fontSize = 14;
+                        targetSystemNameLabelStyle.alignment = TextAnchor.MiddleLeft;
+                    }
+                    targetSystemNameLabelStyle.normal.textColor = systemTextColor;
 
+                    if (targetPlanetNameLabelStyle == null)
+                    {
+                        targetPlanetNameLabelStyle = new GUIStyle(targetSystemNameLabelStyle);
+                    }
+                    targetPlanetNameLabelStyle.normal.textColor = planetTextColor;
+
+                    if (CruiseAssist.TargetStar != null)
+					{
 						GUILayout.Label(CruiseAssist.GetStarName(CruiseAssist.TargetStar), targetSystemNameLabelStyle);
 					}
 					else
-					{
-						GUILayout.Label(" ", targetSystemNameLabelStyle);
+                    {
+                        GUILayout.Label(" ", targetSystemNameLabelStyle);
 					}
 
 					if (CruiseAssist.TargetPlanet != null)
 					{
-						targetPlanetNameLabelStyle.normal.textColor = planetTextColor;
-
 						GUILayout.Label(CruiseAssist.GetPlanetName(CruiseAssist.TargetPlanet), targetPlanetNameLabelStyle);
 					}
 					else
-					{
-						GUILayout.Label(" ", targetPlanetNameLabelStyle);
+                    {
+                        GUILayout.Label(" ", targetPlanetNameLabelStyle);
 					}
 				}
 				GUILayout.EndVertical();
@@ -164,34 +186,39 @@ namespace tanu.CruiseAssist
 						velocity = visual_uvel.magnitude;
 					}
 
-					var targetSystemRangeTimeLabelStyle = new GUIStyle(GUI.skin.label);
-					targetSystemRangeTimeLabelStyle.fixedWidth = 80;
-					targetSystemRangeTimeLabelStyle.fixedHeight = 36;
-					targetSystemRangeTimeLabelStyle.fontSize = 12;
-					targetSystemRangeTimeLabelStyle.alignment = TextAnchor.MiddleRight;
-					var targetPlanetRangeTimeLabelStyle = new GUIStyle(targetSystemRangeTimeLabelStyle);
+					if(targetSystemRangeTimeLabelStyle == null)
+                    {
+                        targetSystemRangeTimeLabelStyle = new GUIStyle(GUI.skin.label);
+                        targetSystemRangeTimeLabelStyle.fixedWidth = 80;
+                        targetSystemRangeTimeLabelStyle.fixedHeight = 36;
+                        targetSystemRangeTimeLabelStyle.fontSize = 12;
+                        targetSystemRangeTimeLabelStyle.alignment = TextAnchor.MiddleRight;
+                    }
+                    targetSystemRangeTimeLabelStyle.normal.textColor = systemTextColor;
 
-					if (CruiseAssist.TargetStar != null)
+                    if (targetPlanetRangeTimeLabelStyle == null)
+                    {
+                        targetPlanetRangeTimeLabelStyle = new GUIStyle(targetSystemRangeTimeLabelStyle);
+                    }
+                    targetPlanetRangeTimeLabelStyle.normal.textColor = planetTextColor;
+
+                    if (CruiseAssist.TargetStar != null)
 					{
-						targetSystemRangeTimeLabelStyle.normal.textColor = systemTextColor;
-
 						var range = (CruiseAssist.TargetStar.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)(CruiseAssist.TargetStar.viewRadius - 120f);
 						GUILayout.Label(RangeToString(range) + "\n" + TimeToString(range / velocity), targetSystemRangeTimeLabelStyle);
 					}
 					else
-					{
-						GUILayout.Label(" \n ", targetSystemRangeTimeLabelStyle);
+                    {
+                        GUILayout.Label(" \n ", targetSystemRangeTimeLabelStyle);
 					}
 					if (CruiseAssist.TargetPlanet != null)
 					{
-						targetPlanetRangeTimeLabelStyle.normal.textColor = planetTextColor;
-
 						var range = (CruiseAssist.TargetPlanet.uPosition - GameMain.mainPlayer.uPosition).magnitude - (double)CruiseAssist.TargetPlanet.realRadius;
 						GUILayout.Label(RangeToString(range) + "\n" + TimeToString(range / velocity), targetPlanetRangeTimeLabelStyle);
 					}
 					else
-					{
-						GUILayout.Label(" \n ", targetPlanetRangeTimeLabelStyle);
+                    {
+                        GUILayout.Label(" \n ", targetPlanetRangeTimeLabelStyle);
 					}
 				}
 				GUILayout.EndVertical();
@@ -201,15 +228,19 @@ namespace tanu.CruiseAssist
 
 			GUILayout.BeginHorizontal();
 			{
-				var cruiseAssistAciviteLabelStyle = new GUIStyle(GUI.skin.label);
-				cruiseAssistAciviteLabelStyle.fixedWidth = 145;
-				cruiseAssistAciviteLabelStyle.fixedHeight = 32;
-				cruiseAssistAciviteLabelStyle.fontSize = 14;
-				cruiseAssistAciviteLabelStyle.alignment = TextAnchor.MiddleLeft;
+				if(cruiseAssistAciviteLabelStyle == null)
+                {
+                    cruiseAssistAciviteLabelStyle = new GUIStyle(GUI.skin.label);
+                    cruiseAssistAciviteLabelStyle.fixedWidth = 145;
+                    cruiseAssistAciviteLabelStyle.fixedHeight = 32;
+                    cruiseAssistAciviteLabelStyle.fontSize = 14;
+                    cruiseAssistAciviteLabelStyle.alignment = TextAnchor.MiddleLeft;
+                }
 
 				if (CruiseAssist.State == CruiseAssistState.INACTIVE)
 				{
-					GUILayout.Label("Cruise Assist Inactive.", cruiseAssistAciviteLabelStyle);
+                    cruiseAssistAciviteLabelStyle.normal.textColor = GUI.skin.label.normal.textColor;
+                    GUILayout.Label("Cruise Assist Inactive.", cruiseAssistAciviteLabelStyle);
 				}
 				else
 				{
@@ -219,11 +250,14 @@ namespace tanu.CruiseAssist
 
 				GUILayout.FlexibleSpace();
 
-				var buttonStyle = new GUIStyle(GUI.skin.button);
-				buttonStyle.fixedWidth = 50;
-				buttonStyle.fixedHeight = 18;
-				buttonStyle.fontSize = 11;
-				buttonStyle.alignment = TextAnchor.MiddleCenter;
+				if (buttonStyle == null)
+                {
+                    buttonStyle = new GUIStyle(GUI.skin.button);
+                    buttonStyle.fixedWidth = 50;
+                    buttonStyle.fixedHeight = 18;
+                    buttonStyle.fontSize = 11;
+                    buttonStyle.alignment = TextAnchor.MiddleCenter;
+                }
 
 				GUILayout.BeginVertical();
 
